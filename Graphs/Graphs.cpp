@@ -357,4 +357,82 @@ bool isBipartite(int V,vector<int>adj[]){
     }
     return true;
 }
-
+// FIND THE MINIMUM SPANNING TREE USING PRIMS ALGORITHM 
+int spanningTreePRIMS(int V,vector<vector<int>>adj[]){
+    vector<bool>isMST(V,false);
+    vector<int>par(V);
+    priority_queue<pair<int,pair<int,int>>,vector<pair<int,pair<int,int>>>,greater<pair<int,pair<int,int>>>>pq;
+    pq.push({0,{0,-1}});
+    int totalCost=0;
+    while(pq.empty()==false){
+        int weight = pq.top().first;
+        int node = pq.top().second.first;
+        int parent = pq.top().second.second;
+        pq.pop();
+        if(isMST[node]==false){
+            isMST[node]=true;
+            par[node]=parent;
+            totalCost+=weight;
+            int n=adj[node].size();
+            for(int i=0;i<n;i++){
+                int weight = adj[node][i][1];
+                int neighbor=adj[node][i][0];
+                pq.push({weight,{neighbor,node}});
+            }
+        }
+    }
+    return totalCost;
+}
+// FIND THE MINIMUM SPANNING TREE USING KRUSKAL ALGORITHM 
+int findParent(int node,vector<int>&parent){
+    if(parent[node]==node){
+        return node;
+    }
+    else{
+        parent[node]=findParent(parent[node],parent);
+    }
+}
+void unionByrank(int u,int v,vector<int>&parent,vector<int>&rank){
+    int parentU = findParent(u,parent);
+    int parentV = findParent(v,parent);
+    if(rank[parentU] > rank[parentV]){
+        parent[parentV]=parentU;
+    }
+    else if(rank[parentU] < rank[parentV]){
+        parent[parentU]=parentV;
+    }
+    else{
+        parent[parentU]=parentV;
+        rank[parentV]++;
+    }
+}
+int spanningTreeKRUSKAL(int V,vector<vector<int>>adj[]){
+    vector<int>parent(V);
+    vector<int>rank(V,0);
+    for(int i=0;i<V;i++){
+        parent[i]=i;
+    }
+    priority_queue<pair<int,pair<int,int>>,vector<pair<int,pair<int,int>>>,greater<pair<int,pair<int,int>>>>pq;
+    for(int i=0;i<V;i++){
+        int n=adj[i].size();
+        for(int j=0;j<n;j++){
+            int neighbor=adj[i][j][0];
+            int weight=adj[i][j][1];
+            pq.push({weight,{i,neighbor}});
+        }
+    }
+    int cost = 0;
+    int edges =0 ;
+    while(pq.empty()==false && edges < V-1){
+        int weight = pq.top().first;
+        int u = pq.top().second.first;
+        int v = pq.top().second.second;
+        pq.pop();
+        if(findParent(u,parent)!=findParent(v,parent)){
+            cost+=weight;
+            edges++;
+            unionByrank(u,v,parent,rank);
+        }
+    }
+    return cost;
+}
