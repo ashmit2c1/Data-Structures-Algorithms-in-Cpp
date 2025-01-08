@@ -436,3 +436,89 @@ int spanningTreeKRUSKAL(int V,vector<vector<int>>adj[]){
     }
     return cost;
 }
+// FIND THE ARTICULATION POINT IN GRAPH BRUTE FORCE WAY 
+void dfsFunction(int node,vector<int>adj[],vector<bool>&visited,int skip){
+    visited[node]=true;
+    int n=adj[node].size();
+    for(int i=0;i<n;i++){
+        int neighbor = adj[node][i];
+        if(visited[neighbor]==false && neighbor!=skip){
+            dfsFunction(neighbor,adj,visited,skip);
+        }
+    }
+}
+bool isGraphConnected(int V,vector<int>adj[],int node){
+    vector<bool>visited(V,false);
+    int start=-1;
+    for(int i=0;i<V;i++){
+        if(i!=node){
+            start=i;
+            break;
+        }
+    }
+    if(start==-1){
+        return false;
+    }
+    dfsFunction(start,adj,visited,node);
+    for(int i=0;i>V;i++){
+        if(i!=node && visited[i]==false){
+            return false;
+        }
+    }
+    return true;
+}
+vector<int>findArticulationsPoint(int V,vector<int>adj[]){
+    vector<int>ans;
+    for(int i=0;i<V;i++){
+        if(isGraphConnected(V,adj,i)==false){
+            ans.push_back(i);
+        }
+    }
+    return ans;
+}
+// FIND THE ARTICULATION POINT IN GRAPH OPTIMISED WAY
+void dfsArtPoint(int node,int parent,vector<int>adj[],vector<bool>&visited,vector<int>&discovery,vector<int>&low,vector<bool>&artPoints,int &count){
+    visited[node]=true;
+    discovery[node]=low[node]=count++;
+    int n=adj[node].size();
+    int child=0;
+    for(int i=0;i<n;i++){
+        int neighbor=adj[node][i];
+        if(neighbor==parent){
+            continue;
+        }
+        if(visited[neighbor]==true){
+            low[node]=min(low[node],discovery[neighbor]);
+        }
+        else{
+            child++;
+            dfsArtPoint(neighbor,node,adj,visited,discovery,low,artPoints,count);
+            low[node]=min(low[node],low[neighbor]);
+            if(discovery[node] <= low[neighbor] && parent!=-1){
+                artPoints[node]=true;
+            }
+        }
+        if(parent==-1 && child>1){
+            artPoints[node]=true;
+        }
+    }
+}
+vector<int>findPoints(int V, vector<int>adj[]){
+    vector<int>discovery(V,-1);
+    vector<int>low(V,-1);
+    vector<bool>artPoints(V,false);
+    vector<bool>visited(V,false);
+    int count=0;
+    for(int i=0;i<V;i++){
+        if(visited[i]==false){
+            dfsArtPoint(i,-1,adj,visited,discovery,low,artPoints,count);
+        }
+    }
+    vector<int>ans;
+    for(int i=0;i<artPoints.size();i++){
+        if(artPoints[i]==true){
+            ans.push_back(i);
+        }
+    }
+    return ans;
+}
