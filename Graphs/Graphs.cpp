@@ -522,3 +522,42 @@ vector<int>findPoints(int V, vector<int>adj[]){
     }
     return ans;
 }
+// BRIDGES IN GRAPH BRUTE FORCE WAY 
+void dfs(int node,vector<int>adj[],vector<bool>&visited){
+    visited[node]=true;
+    int n=adj[node].size();
+    for(int i=0;i<n;i++){
+        int neighbor=adj[node][i];
+        if(visited[neighbor]==false){
+            dfs(neighbor,adj,visited);
+        }
+    }
+}
+bool isConnected(vector<int>adj[],int V){
+    vector<bool>visited(V,false);
+    dfs(0,adj,visited);
+    for(int i=0;i<V;i++){
+        if(visited[i]==false){
+            return false;
+        }
+    }
+    return true;
+}
+vector<vector<int>>criticalConnections(int V,vector<int>adj[]){
+    vector<vector<int>>ans;
+    for(int u=0;u<V;u++){
+        for(int v:adj[u]){
+            if(u<v){
+                adj[u].erase(find(adj[u].begin(),adj[u].end(),v));
+                adj[v].erase(find(adj[v].begin(),adj[v].end(),u));
+                if(isConnected(adj,V)==false){
+                    ans.push_back({u,v});
+                    adj[u].push_back(v);
+                    adj[v].push_back(u);
+                }
+            }
+        }
+    }
+    return ans;
+}
+// BRIDGES IN GRAPH OPTIMISED WAY
