@@ -445,3 +445,182 @@ vector<int>greaterOnLeft(vector<int>&arr){
     }
     return ans;
 }
+// NEXT GREATER ELEMENT IN A CIRCULAR ARRAY 
+vector<int>nextGreaterElement(vector<int>&arr){
+    vector<int>ans(arr.size(),-1);
+    stack<int>st;
+    for(int i=0;i<2*arr.size();i++){
+        int num = arr[i%arr.size()];
+        while(st.empty()==false && arr[st.top()] < num){
+            ans[st.top()]=num;
+            st.pop();
+        }
+        if(i<arr.size()){
+            st.push(i);
+        }
+    }
+    return ans;
+}
+// STOCK SPAN PROBLEM BRUTE FORCE 
+vector<int>stockSpanBruteForce(vector<int>&arr){
+    vector<int>span(arr.size(),1);
+    for(int i=0;i<arr.size();i++){
+        for(int j=i-1;j>=0;j--){
+            if(arr[j] <=arr[i]){
+                span[i]++;
+            }
+            else{
+                break;
+            }
+        }
+    }
+    return span;
+}
+// STOCK SPAN OPTIMISED WAY 
+vector<int>stockSpan(vector<int>&prices){
+    vector<int>span(prices.size());
+    stack<int>st;
+    for(int i=0;i<prices.size();i++){
+        while(st.empty()==false && prices[st.top()]<=prices[i]){
+            st.pop();
+        }
+        if(st.empty()==false){
+            span[i]=i+1;
+        }
+        else{
+            span[i]=i-st.top();
+        }
+        st.push(i);
+    }
+    return span;
+}
+// CELEBRITY PROBLEM BRUTE FORCE WAY 1 
+bool checkForPerson(int person,vector<vector<int>>&M){
+    bool validPersonOnRow=true;
+    bool validPersonOnColumn=true;
+    for(int i=0;i<M.size();i++){
+        if(i!=person && M[person][i]==1){
+            validPersonOnRow=false;
+            break;
+        }
+    }
+    for(int i=0;i<M.size();i++){
+        if(i!=person && M[i][person]==0){
+            validPersonOnColumn=false;
+            break;
+        }
+    }
+    if(validPersonOnColumn==true && validPersonOnRow==true){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+int celebrity(vector<vector<int>>&M,int n){
+    for(int i=0;i<n;i++){
+        bool ans = checkForPerson(i,M);
+        if(ans==true){
+            return i;
+        }
+    }
+    return -1;
+}
+// CELEBRITY PROBLEM GRAPH BASED APPROACH 
+int celebrity(vector<vector<int>>&M,int n){
+    vector<int>inDegree(M.size(),0);
+    vector<int>outDegree(M.size(),0);
+
+    for(int i=0;i<n;i++){
+        for(int j=0;j<n;j++){
+            if(M[i][j]==1){
+                inDegree[j]++;
+                outDegree[i]++;
+            }
+        }
+    }
+    for(int i=0;i<n;i++){
+        if(inDegree[i]==n-1 && outDegree[i]==0){
+            return i;
+        }
+    }
+    return -1;
+}
+// CELEBRITY PROBLEM STACK BASED APPROACH 
+int celebrity(vector<vector<int>>&M,int n){
+    stack<int>st;
+    for(int i=0;i<n;i++){
+        st.push(i);
+    }
+    while(st.size()>1){
+        int a=st.top();st.pop();
+        int b=st.top();st.pop();
+        if(M[a][b]==1){
+            st.push(b);
+        }
+        else{
+            st.push(a);
+        }
+    }
+    int candiateCelebrity = st.top();
+    for(int i=0;i<n;i++){
+        if(i!=candiateCelebrity && M[i][candiateCelebrity]==0){
+            return -1;
+        }
+    }
+    return candiateCelebrity;
+}
+// LARGEST RECTANGLE IN HISTOGRAM BRUTE FORCE WAY 
+int largestRectangle(vector<int>&heights){
+    int n=heights.size();
+    int maxArea=INT_MIN;
+    for(int i=0;i<heights.size();i++){
+        int minHeight = heights[i];
+        for(int j=i;j<heights.size();j++){
+            minHeight = min(minHeight,heights[j]);
+            int width = j-i+1;
+            int area = minHeight*width;
+            maxArea = max(maxArea,area);
+        }
+    }
+    return maxArea;
+}
+// LARGEST RECTANLGE IN HISTOGRAM OPTIMISED WAY 
+vector<int> nextSmallerElement(int arr[], int n) {
+    vector<int> ans(n, n);
+    stack<int> st;
+    for (int i = 0; i < n; ++i) {
+        while (!st.empty() && arr[i] < arr[st.top()]) {
+            ans[st.top()] = i;
+            st.pop();
+        }
+        st.push(i);
+    }
+    return ans;
+}
+    vector<int> smallestOnLeft(int arr[], int n) {
+    stack<int> st;
+    vector<int> ans(n, -1);
+    for (int i = 0; i < n; ++i) {
+        while (!st.empty() && arr[st.top()] >= arr[i]) {
+            st.pop();
+        }
+        if (!st.empty()) {
+            ans[i] = st.top();
+        }
+        st.push(i);
+    }
+    return ans;
+}
+int getMaxArea(int arr[], int n)
+{
+    vector<int > nextSmallestRight = nextSmallerElement(arr,n);
+    vector<int> nextSmallestLeft  = smallestOnLeft(arr,n);
+    int maxArea = 0;
+    for(int i=0;i<n;i++){
+        int mul = nextSmallestRight[i]-nextSmallestLeft[i]-1;
+        int area = arr[i]*mul;
+        maxArea = max(area,maxArea);
+    }
+    return maxArea;
+}
