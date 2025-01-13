@@ -598,7 +598,7 @@ vector<int> nextSmallerElement(int arr[], int n) {
     }
     return ans;
 }
-    vector<int> smallestOnLeft(int arr[], int n) {
+vector<int> smallestOnLeft(int arr[], int n) {
     stack<int> st;
     vector<int> ans(n, -1);
     for (int i = 0; i < n; ++i) {
@@ -612,15 +612,14 @@ vector<int> nextSmallerElement(int arr[], int n) {
     }
     return ans;
 }
-int getMaxArea(int arr[], int n)
-{
-    vector<int > nextSmallestRight = nextSmallerElement(arr,n);
-    vector<int> nextSmallestLeft  = smallestOnLeft(arr,n);
+int getMaxArea(int arr[], int n) {
+    vector<int> nextSmallestRight = nextSmallerElement(arr, n);
+    vector<int> nextSmallestLeft = smallestOnLeft(arr, n);
     int maxArea = 0;
-    for(int i=0;i<n;i++){
-        int mul = nextSmallestRight[i]-nextSmallestLeft[i]-1;
-        int area = arr[i]*mul;
-        maxArea = max(area,maxArea);
+    for (int i = 0; i < n; i++) {
+        int width = nextSmallestRight[i] - nextSmallestLeft[i] - 1;
+        int area = arr[i] * width;
+        maxArea = max(area, maxArea);
     }
     return maxArea;
 }
