@@ -623,3 +623,57 @@ int getMaxArea(int arr[], int n) {
     }
     return maxArea;
 }
+// LONGEST LENGTH VALID PARENTHESIS BRUTE FORCE WAY 
+bool isValid(string s){
+    int balance=0;
+    for(int i=0;i<s.size();i++){
+        char character = s[i];
+        if(character=='('){
+            balance++;
+        }
+        else{
+            balance--;
+            if(balance<0){
+                return false;
+            }
+        }
+    }
+    if(balance==0){
+        return true;
+    }
+    return false;
+}
+int longestValidParenthesis(string s){
+    int maxlen=0;
+    for(int i=0;i<s.size();i++){
+        for(int j=i+1;j<s.size();j++){
+            string substring = s.substr(i,j-i);
+            bool check = isValid(s);
+            if(check==true){
+                maxlen = max(maxlen,j-i);
+            }
+        }
+    }
+    return maxlen;
+}
+// LONGEST LENGTH IN VALID PARENTHESIS OPTIMISED WAY 
+int longestValidParenthesis(string s){
+    stack<int>st;
+    st.push(-1);
+    int maxlen=0;
+    for(int i=0;i<s.size();i++){
+        char character = s[i];
+        if(character=='('){
+            st.push(i);
+        }
+        else{
+            st.pop();
+            if(st.size()==0){
+                st.push(i);
+            }else{
+                maxlen=max(maxlen,i-st.top());
+            }
+        }
+    }
+    return maxlen;
+}
