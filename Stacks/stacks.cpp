@@ -1,69 +1,63 @@
 #include<bits/stdc++.h>
 using namespace std;
-
-// IMPLEMENTING STACK USING ARRAY 
-class StackUsingArray{
+// IMPLEMENTATION OF STACK USING ARRAY 
+class StackArray{
     private:
         int *arr;
         int top;
         int size;
-
     public:
-        StackUsingArray(int s){
-            size=s;
-            top=-1;
+        StackArray(int s){
             arr = new int[s];
+            top = -1;
+            size = s;
         }
-        // PUSH OPERATION IN STACK 
-        void push(int value){
-            if(top==size-1){
-                cout << "Stack is already full" << "\n";
-                return;
-            }
-            else{
-                arr[top]=value;
-                top++;
-                cout << "Push the value in stack" << "\n";
-                return;
-            }
+    //PUSHING VALUE INTO STACK 
+    void push(int value){
+        if(top==size-1){
+            cout << "Stack is full, cannot push more elements" << "\n";
+            return;
+        }else{
+            top++;
+            arr[top]=value;
+            cout << "Pushed the element into stack" << "\n";
+            return;
         }
-        // POP OPERATION IN STACK 
-        void pop(){
-            if(top==-1){
-                cout << "Stack underflow, nothing to pop" << "\n";
-                return;
-            }
-            else{
-                top--;
-                cout << "Removed the element from stack" << "\n";
-            }
+    }
+    // POPPING AN ELEMENT FROMTHE STOC
+    void pop(){
+        if(top==-1){
+            cout << "Stack is already empty, cannot remove any element" << "\n";
+            return;
+        }else{
+            top--;
+            cout << "Removed the element from the stack" <<"\n";
         }
-        // TOP ELEMENT IN STACK
-        int topElement(){
-            if(top==-1){
-                cout << "Stack is empty" << "\n";
-                return -1;
-            }
-            else{
-                return arr[top];
-            }
+    }
+    // RETURN THE TOP ELEMENT IN THE STACK 
+    int topElement(){
+        if(top==-1){
+            cout << "Stack is empty, no element to return" <<" \n";
+            return -1;
+        }else{
+            return arr[top];
         }
-        // IS EMPTY 
-        bool isEmpty(){
-            if(top==-1){
-                return true;
-            }
-            else{
-                return false;
-            }
+    }
+    // SIZE OF THE STACK 
+    int sizeOfStack(){
+        return top+1;
+    }
+    // IS STACK EMPTY 
+    bool isEmpty(){
+        if(top==-1){
+            return true;
+        }else{
+            return false;
         }
-        // SIZE OF THE STACK 
-        int sizeOfStack(){
-            return top+1;
-        }
+    }
 };
-// REVERSE A STRING USING STACK 
-string reverseUsingStack(string s){
+// REVERSE A STRING USING STACK
+string reverseString(string s){
     stack<char>st;
     for(int i=0;i<s.size();i++){
         char character = s[i];
@@ -73,237 +67,216 @@ string reverseUsingStack(string s){
     while(st.empty()==false){
         char character = st.top();
         st.pop();
-        s[index]=character;
-        index++;
+        s[index]=character;index++;
     }
     return s;
 }
-// INSERT X AT THE BOTTOM OF THE STACK 
+// INSERT X AT THE BOTTOM OF THE STACK
 stack<int>insertAtBottom(stack<int>&st,int X){
     stack<int>temp;
     while(st.empty()==false){
-        int topElement = st.top();
-        st.pop();
+        int topElement = st.top();st.pop();
         temp.push(topElement);
     }
     st.push(X);
     while(temp.empty()==false){
-        int topElement = temp.top();
-        temp.pop();
+        int topElement = temp.top();temp.pop();
         st.push(topElement);
     }
     return st;
 }
-// MAKE THE ARRAY BEATIFUL 
-vector<int>makeArray(vector<int>&arr){
+// MAKE THE ARRAY BEAUTIFUL 
+vector<int>makeBeautiful(vector<int>&arr){
     stack<int>st;
     for(int i=0;i<arr.size();i++){
+        int element = arr[i];
         if(st.empty()==true){
-            st.push(arr[i]);
+            st.push(element);
         }
-        else if(arr[i]>=0){
+        if(element>=0){
             if(st.top()>=0){
-                st.push(arr[i]);
-            }
-            else{
+                st.push(element);
+            }else{
                 st.pop();
             }
-        }
-        else{
+        }else{
             if(st.top()<0){
-                st.push(arr[i]);
-            }
-            else{
+                st.push(element);
+            }else{
                 st.pop();
             }
         }
     }
+    vector<int>ans(st.size(),-1);
     int index=st.size()-1;
-    vector<int>ans;
     while(st.empty()==false){
-        int topElement = st.top();
-        ans[index]=topElement;
+        ans[index]=st.top();st.pop();
         index--;
     }
-    return ans;
+    return arr;
 }
 // STRING MANIPULATION 
-vector<string>stringManipulation(vector<string>&stringVector){
+vector<string>stringManipulation(vector<string>&arr){
     stack<string>st;
-    for(int i=0;i<stringVector.size();i++){
-        string s = stringVector[i];
+    for(int i=0;i<arr.size();i++){
+        string s=arr[i];
         if(st.empty()==true){
             st.push(s);
         }
-        else if(s==st.top()){
+        if(st.top()==s){
             st.pop();
-        }
-        else{
+        }else{
             st.push(s);
         }
     }
-    vector<string>ans;
     int index=st.size()-1;
+    vector<string>ans(st.size(),"");
     while(st.empty()==false){
-        string topString = st.top();
-        ans[index]=topString;
-        st.pop();
+        ans[index]=st.top();st.pop();
         index--;
     }
     return ans;
 }
-// CHECK FOR PARENTHESIS 
+// CHECK FOR VALID PARENTHESIS 
 bool isValid(string parenthesis){
-    stack<char>st;
-    for(int i=0;i<parenthesis.size();i++){
-        char ch = parenthesis[i];
-        if(ch=='('){
-            st.push(ch);
-        }
-        else{
-            if(st.size()==0){
-                return false;
-            }
-            else{
-                st.pop();
-            }
-        }
-    }
-    if(st.size()==0){
-        return true;
-    }
-    else{
-        return false;
-    }
-}
-// SOLVING WITHOUT STACK 
-bool isValid2(string parenthesis){
-    int left=0;
-    for(int i=0;i<parenthesis.size();i++){
-        char ch = parenthesis[i];
-        if(ch=='('){
-            left++;
-        }
-        else{
-            if(left==0){
-                return false;
-            }
-            else{
-                left--;
-            }
-        }
-    }
-    if(left==0){
-        return true;
-    }
-    else{
-        return false;
-    }
-}
-// MINIMUM NUMBER OF ADDITIONS TO MAKE THE PARENTHESIS VALID
-int minAdditions(string parenthesis){
-    int additions=0;
     stack<char>st;
     for(int i=0;i<parenthesis.size();i++){
         char character = parenthesis[i];
         if(character=='('){
             st.push(character);
-        }
-        else{
-            if(st.size()==0){
-                additions++;
-            }
-            else{
-                st.pop();
-            }
-        }
-    }
-    return additions+st.size();
-}
-// VALID PARENTHESIS WITH DIFFERENT CHARACTERS
-bool checkForValid2(string &s){
-    int n = s.size();
-    stack<char> st;
-    for(int i = 0; i<n ; i++){
-        char ch = s[i];
-        if(ch=='(' || ch=='{' || ch=='['){
-            st.push(ch);
-        }
-        else{
+        }else{
             if(st.empty()==true){
                 return false;
-            }
-            else if(ch==')'){
-                if(st.top()!='('){
-                    return false;
-                }
-                else{
-                    st.pop();
-                }
-            }
-            else if(ch=='}'){
-                if(st.top()!='{'){
-                    return false;
-                }
-                else{
-                    st.top();
-                }
-            }
-            else{
-                if(st.top()!='['){
-                    return false;
-                }
-                else{
-                    st.pop();
-                }
+            }else{
+                st.pop();
             }
         }
     }
     if(st.size()==0){
         return true;
     }
-    else{
+    return false;
+}
+// CHECK FOR VALID PARENTHESIS 
+bool isValid(string parenthesis){
+    stack<char>st;
+    int count=0;
+    for(int i=0;i<parenthesis.size();i++){
+        char character = parenthesis[i];
+        if(character=='('){
+            count++;
+        }
+        else{
+            if(count==0){
+                return false;
+            }else{
+                count--;
+            }
+        }
+    }
+    if(count==0){
+        return true;
+    }else{
         return false;
     }
 }
-// CHECK IF THE GIVEN STRINGS ARE EQUAL POST BACKSLASH
-bool equalOrNot(string s1,string s2){
-    stack<char>st1,st2;
+// MINIUM ADDITIONS TO MAKE THE STRING VALID PARENTHESIS 
+int minAdditions(string parenthesis){
+    stack<char>st;
+    int additions=0;
+    for(int i=0;i<parenthesis.size();i++){
+        char character = parenthesis[i];
+        if(character=='('){
+            st.push(character);
+        }else{
+            if(st.size()==0){
+                additions++;
+            }else{
+                st.pop();
+            }
+        }
+    }
+    return st.size()+additions;
+}
+// CHECK FOR VALID PARENTHESIS WITH DIFFERENT CHARACTERS
+bool checkParenthesis(string parenthesis){
+    stack<char>st;
+    for(int i=0;i<parenthesis.size();i++){
+        char character = parenthesis[i];
+        if(character=='(' || character=='{' || character=='['){
+            st.push(character);
+        }else{
+            if(st.size()==0){
+                return false;
+            }
+            if(character==')'){
+                if(st.top()!='('){
+                    return false;
+                }else{
+                    st.pop();
+                }
+            }
+            else if(character=='}'){
+                if(st.top()!='{'){
+                    return false;
+                }else{
+                    st.pop();
+                }
+            }else{
+                if(st.top()!=']'){
+                    return false;
+                }else{
+                    st.pop();
+                }
+            }
+        }
+    }
+    if(st.size()==0){
+        return false;
+    }
+    return true;
+}
+// CHECK IF STRINGS ARE EQUAL POST BACKSLAASH 
+bool areEqual(string s1,string s2){
+    stack<char>st;
+    stack<char>st2;
     for(int i=0;i<s1.size();i++){
         char character = s1[i];
         if(character!='#'){
-            st1.push(character);
-        }
-        else{
-            st1.pop();
+            st.push(character);
+        }else{
+            st.pop();
         }
     }
     for(int i=0;i<s2.size();i++){
         char character = s2[i];
         if(character!='#'){
-            st2.push(character);
+            st.push(character);
         }else{
-            st2.pop();
+            st.pop();
         }
     }
-    while(st1.empty()==false && st2.empty()==false){
-        char firstTop = st1.top();
-        char secondTop = st2.top();
-        st1.pop();st2.pop();
-        if(firstTop!=secondTop){
+    if(st.size()!=st2.size()){
+        return false;
+    }
+    while(st.empty()==false){
+        char topElement1=st.top();
+        char topElement2=st2.top();
+        if(topElement1!=topElement2){
             return false;
         }
+        st.pop();st2.pop();
     }
     return true;
 }
-// PRINT BRACKET NUMBER 
+// PRINT THE BRACEKT NUMBER 
 vector<int>printBracketNumber(string s){
     stack<int>st;
     vector<int>ans;
     int count=0;
     for(int i=0;i<s.size();i++){
         char character = s[i];
-        if(character == '('){
+        if(character=='('){
             count++;
             st.push(count);
             ans.push_back(count);
@@ -316,27 +289,28 @@ vector<int>printBracketNumber(string s){
     return ans;
 }
 // GET MINIMUM AT POP
-vector<int>findMinAtPop(vector<int>&arr){
-    stack<int>st,minStack;
-    minStack.push(INT_MAX);
+vector<int>getMin(vector<int>&arr){
+    stack<int>st;
+    stack<int>minSt;
+    minSt.push(INT_MAX);
     for(int i=0;i<arr.size();i++){
         int element = arr[i];
         st.push(element);
-        minStack.push(min(minStack.top(),element));
+        minSt.push(min(minSt.top(),element));
     }
     vector<int>ans;
     while(st.empty()==false){
-        ans.push_back(minStack.top());
-        st.pop();minStack.pop();
+        ans.push_back(minSt.top());
+        st.pop();minSt.pop();
     }
     return ans;
 }
-// NEXT GREATER  ELEMENT BRUTE FORCE WAY TO SOLVE 
-vector<int>nextGreaterElement(vector<int>&arr){
+// NEXT GREATER ELEMENT BRUTE FORCE WAY 
+vector<int>nextGreater(vector<int>&arr){
     vector<int>ans(arr.size(),-1);
     for(int i=0;i<arr.size();i++){
-        for(int j=i+1;j<arr.size();i++){
-            if(arr[i]<arr[j]){
+        for(int j=i+1;j<arr.size();j++){
+            if(arr[j] > arr[i]){
                 ans[i]=arr[j];
                 break;
             }
@@ -344,43 +318,24 @@ vector<int>nextGreaterElement(vector<int>&arr){
     }
     return ans;
 }
-// NEXT GREATER ELEMENT OPTIMISED WAY TO SOLVE 
-vector<int>nextGreaterElement(vector<int>&arr){
+// NEXT GREATER ELEMENT OPTIMIES USING STACK 
+vector<int>nextGreater(vector<int>&arr){
     vector<int>ans(arr.size(),-1);
     stack<int>st;
     for(int i=0;i<arr.size();i++){
-        if(st.empty()==true){
-            st.push(i);
+        while(st.empty()==false && arr[st.top()] < arr[i]){
+            ans[st.top()] = arr[i];
+            st.pop();
         }
-        else{
-            while(st.empty()==false && arr[st.top()] < arr[i]){
-                ans[st.top()]=arr[i];
-                st.pop();
-            }
-            st.push(i);
-        }
+        st.push(i);
     }
-    return ans;
 }
-// NEXT SMALLER ELEMENT BRUTE FORCE WAY 
-vector<int>nextSmallerElement(vector<int>&arr){
-    vector<int>ans(arr.size(),-1);
-    for(int i=0;i<arr.size();i++){
-        for(int j=i+1;j<arr.size();j++){
-            if(arr[i] > arr[j]){
-                ans.push_back(arr[j]);
-                break;
-            }
-        }
-    }
-    return ans;
-}
-// NEXT SMALLER ELEMENT OPTIMISED WAY 
-vector<int>nextSmallerElement(vector<int>&arr){
+// NEXT SMALLER ELEMENT BRUTE FORCE 
+vector<int>nextSmaller(vector<int>&arr){
     vector<int>ans(arr.size(),-1);
     stack<int>st;
     for(int i=0;i<arr.size();i++){
-        while(st.empty()==false && arr[i] < arr[st.top()]){
+        while(st.empty()==false && arr[st.top()] > arr[i]){
             ans[st.top()] = arr[i];
             st.pop();
         }
@@ -388,41 +343,40 @@ vector<int>nextSmallerElement(vector<int>&arr){
     }
     return ans;
 }
-// SMALLER NUMBER ON LEFT BRUTE FORCE WAY 
+// SMALLER NUMBER ON LEFT 
 vector<int>smallerOnLeft(vector<int>&arr){
     vector<int>ans(arr.size(),-1);
     for(int i=0;i<arr.size();i++){
-        for(int j=i-1;j>=0;j++){
-            if(arr[i]>arr[j]){
-                ans[i]=arr[j];
+        for(int j=i-1;j>=0;j--){
+            if(arr[j] < arr[i]){
+                ans.push_back(arr[j]);
                 break;
             }
         }
     }
     return ans;
 }
-// SMALLER NUMBER ON LEFT OPTIMISED WAY 
+// SMALLER NUMBER ON LEFT OPTIMISED 
 vector<int>smallerOnLeft(vector<int>&arr){
-    stack<int>st;
-    vector<int>ans(arr.size(),-1);
-    for(int i=0;i<arr.size();i++){
-        while(st.empty()==false && arr[st.top()]>=arr[i]){
-            st.pop();
-        }
-        if(st.empty()==false){
-            ans[i]=arr[st.top()];
-        }
-        st.push(i);
+   vector<int>ans(arr.size(),-1);
+   stack<int>st;
+   for(int i=0;i<arr.size();i++){
+    while(st.empty()==false && arr[st.top()]>=arr[i]){
+        st.pop();
     }
-    return ans;
+    if(st.empty()==false){
+        ans[i]=arr[st.top()];
+    }
+    st.push(i);
+   } 
 }
-// GREATER NUMBER ON LEFT BRUTE FORCE
+// GREATER NUMBER ON LEFT 
 vector<int>greaterOnLeft(vector<int>&arr){
     vector<int>ans(arr.size(),-1);
     for(int i=0;i<arr.size();i++){
-        for(int j=i-1;j>=0;j--){
+        for(int j=i-1;j>=0;j++){
             if(arr[j] > arr[i]){
-                ans.push_back(arr[j]);
+                ans[i] =arr[j];
                 break;
             }
         }
@@ -431,7 +385,6 @@ vector<int>greaterOnLeft(vector<int>&arr){
 }
 // GREATER NUMBER ON LEFT OPTIMISED WAY 
 vector<int>greaterOnLeft(vector<int>&arr){
-    int n=arr.size();
     vector<int>ans(arr.size(),-1);
     stack<int>st;
     for(int i=0;i<arr.size();i++){
@@ -445,101 +398,95 @@ vector<int>greaterOnLeft(vector<int>&arr){
     }
     return ans;
 }
-// NEXT GREATER ELEMENT IN A CIRCULAR ARRAY 
-vector<int>nextGreaterElement(vector<int>&arr){
+// NEXT GREATER ELEMENT IN CIRCULAR WAY 
+vector<int>nextGreaterCircular(vector<int>&arr){
     vector<int>ans(arr.size(),-1);
     stack<int>st;
     for(int i=0;i<2*arr.size();i++){
         int num = arr[i%arr.size()];
-        while(st.empty()==false && arr[st.top()] < num){
-            ans[st.top()]=num;
+        while(st.empty()==false && arr[st.top()]<num){
+            ans[st.top()] = num;
             st.pop();
         }
         if(i<arr.size()){
             st.push(i);
         }
     }
-    return ans;
 }
-// STOCK SPAN PROBLEM BRUTE FORCE 
-vector<int>stockSpanBruteForce(vector<int>&arr){
-    vector<int>span(arr.size(),1);
-    for(int i=0;i<arr.size();i++){
+// STOCK SPAN PROBLEM
+vector<int>stockSpan(vector<int>&prices){
+    vector<int>ans(prices.size());
+    for(int i=0;i<prices.size();i++){
         for(int j=i-1;j>=0;j--){
-            if(arr[j] <=arr[i]){
-                span[i]++;
+            if(prices[j]<=prices[i]){
+                ans[i]++;
             }
             else{
                 break;
             }
         }
     }
-    return span;
+    return ans;
 }
-// STOCK SPAN OPTIMISED WAY 
-vector<int>stockSpan(vector<int>&prices){
-    vector<int>span(prices.size());
+// STOCK SPAN PROBLEM USING 
+vector<int>stockSpan(vector<int>&arr){
+    vector<int>span(arr.size());
     stack<int>st;
-    for(int i=0;i<prices.size();i++){
-        while(st.empty()==false && prices[st.top()]<=prices[i]){
+    for(int i=0;i<arr.size();i++){
+        while(st.empty()==false && arr[st.top()]<=arr[i]){
             st.pop();
         }
-        if(st.empty()==false){
+        if(st.empty()==true){
             span[i]=i+1;
-        }
-        else{
+        }else{
             span[i]=i-st.top();
         }
         st.push(i);
     }
     return span;
 }
-// CELEBRITY PROBLEM BRUTE FORCE WAY 1 
-bool checkForPerson(int person,vector<vector<int>>&M){
-    bool validPersonOnRow=true;
-    bool validPersonOnColumn=true;
+// CELEBRITY PROBLEM BRUTE FORCE
+bool check(int person,vector<vector<int>>&M){
+    bool validPersonRow=true;
+    bool validPersonCol=true;
     for(int i=0;i<M.size();i++){
         if(i!=person && M[person][i]==1){
-            validPersonOnRow=false;
+            validPersonRow=false;
             break;
         }
     }
     for(int i=0;i<M.size();i++){
-        if(i!=person && M[i][person]==0){
-            validPersonOnColumn=false;
+        if(i!=person && M[i][person]==1){
+            validPersonCol=false;
             break;
         }
     }
-    if(validPersonOnColumn==true && validPersonOnRow==true){
+    if(validPersonCol==true && validPersonRow==true){
         return true;
-    }
-    else{
+    }else{
         return false;
     }
 }
 int celebrity(vector<vector<int>>&M,int n){
     for(int i=0;i<n;i++){
-        bool ans = checkForPerson(i,M);
+        bool ans=check(i,M);
         if(ans==true){
-            return i;
+            return true;
         }
     }
-    return -1;
+    return false;
 }
 // CELEBRITY PROBLEM GRAPH BASED APPROACH 
 int celebrity(vector<vector<int>>&M,int n){
-    vector<int>inDegree(M.size(),0);
-    vector<int>outDegree(M.size(),0);
-
+    vector<int>inDegree(n,0);
+    vector<int>outDegree(n,0);
     for(int i=0;i<n;i++){
         for(int j=0;j<n;j++){
-            if(M[i][j]==1){
-                inDegree[j]++;
-                outDegree[i]++;
-            }
+            inDegree[j]++;
+            outDegree[i]++;
         }
     }
-    for(int i=0;i<n;i++){
+    for(int i=0;i<outDegree.size();i++){
         if(inDegree[i]==n-1 && outDegree[i]==0){
             return i;
         }
@@ -552,30 +499,28 @@ int celebrity(vector<vector<int>>&M,int n){
     for(int i=0;i<n;i++){
         st.push(i);
     }
-    while(st.size()>1){
+    while(st.empty()==false){
         int a=st.top();st.pop();
         int b=st.top();st.pop();
         if(M[a][b]==1){
             st.push(b);
-        }
-        else{
+        }else{
             st.push(a);
         }
     }
-    int candiateCelebrity = st.top();
+    int candidate = st.top();
     for(int i=0;i<n;i++){
-        if(i!=candiateCelebrity && M[i][candiateCelebrity]==0){
+        if(i!=candidate && M[candidate][i]==1){
             return -1;
         }
     }
-    return candiateCelebrity;
+    return candidate;
 }
-// LARGEST RECTANGLE IN HISTOGRAM BRUTE FORCE WAY 
+// LARGEST RECTANGLE IN HISTOGRAM 
 int largestRectangle(vector<int>&heights){
-    int n=heights.size();
     int maxArea=INT_MIN;
     for(int i=0;i<heights.size();i++){
-        int minHeight = heights[i];
+        int  minHeight = heights[i];
         for(int j=i;j<heights.size();j++){
             minHeight = min(minHeight,heights[j]);
             int width = j-i+1;
@@ -585,93 +530,88 @@ int largestRectangle(vector<int>&heights){
     }
     return maxArea;
 }
-// LARGEST RECTANLGE IN HISTOGRAM OPTIMISED WAY 
-vector<int> nextSmallerElement(int arr[], int n) {
-    vector<int> ans(n, n);
-    stack<int> st;
-    for (int i = 0; i < n; ++i) {
-        while (!st.empty() && arr[i] < arr[st.top()]) {
-            ans[st.top()] = i;
+// LARGEST RECTANGLE IN HISTOGRAM OPTIMISED WAY 
+vector<int>nextSmallestElement(vector<int>&arr){
+    vector<int>ans(arr.size(),-1);
+    stack<int>st;
+    for(int i=0;i<arr.size();i++){
+        while(st.empty()==false && arr[st.top()]>arr[i]){
+            ans[st.top()]=arr[i];
             st.pop();
         }
         st.push(i);
     }
     return ans;
 }
-vector<int> smallestOnLeft(int arr[], int n) {
-    stack<int> st;
-    vector<int> ans(n, -1);
-    for (int i = 0; i < n; ++i) {
-        while (!st.empty() && arr[st.top()] >= arr[i]) {
+vector<int>smallestOnLeft(vector<int>&arr){
+    vector<int>ans(arr.size(),-1);
+    stack<int>st;
+    for(int i=0;i<arr.size();i++){
+        while(st.empty()==false && arr[st.top()] > arr[i]){
             st.pop();
         }
-        if (!st.empty()) {
-            ans[i] = st.top();
+        if(st.empty()==false){
+            ans[i]=arr[st.top()];
         }
         st.push(i);
     }
     return ans;
 }
-int getMaxArea(int arr[], int n) {
-    vector<int> nextSmallestRight = nextSmallerElement(arr, n);
-    vector<int> nextSmallestLeft = smallestOnLeft(arr, n);
-    int maxArea = 0;
-    for (int i = 0; i < n; i++) {
-        int width = nextSmallestRight[i] - nextSmallestLeft[i] - 1;
-        int area = arr[i] * width;
-        maxArea = max(area, maxArea);
+int largestRectangle(vector<int>&heights,int n){
+    vector<int>nextSmalletRight = nextSmallestElement(heights);
+    vector<int>nextSmallestLeft = smallestOnLeft(heights);
+    int maxArea=0;
+    for(int i=0;i<heights.size();i++){
+        int width = nextSmalletRight[i] - nextSmallestLeft[i];
+        int area = heights[i]*width;
+        maxArea = max(area,maxArea);
     }
     return maxArea;
 }
-// LONGEST LENGTH VALID PARENTHESIS BRUTE FORCE WAY 
-bool isValid(string s){
-    int balance=0;
-    for(int i=0;i<s.size();i++){
-        char character = s[i];
+// LONGEST VALID PARENTHESIS 
+bool checkSub(string substring){
+    int open=0;
+    for(int i=0;i<substring.size();i++){
+        char character = substring[i];
         if(character=='('){
-            balance++;
-        }
-        else{
-            balance--;
-            if(balance<0){
+            open++;
+        }else{
+            if(open==0){
                 return false;
             }
+            open--;
         }
     }
-    if(balance==0){
-        return true;
+    if(open==0){return true;}else{
+        return false;
     }
-    return false;
 }
 int longestValidParenthesis(string s){
-    int maxlen=0;
+    int maxLen=0;
     for(int i=0;i<s.size();i++){
-        for(int j=i+1;j<s.size();j++){
+        for(int j=i+1;j<=s.size();j++){
             string substring = s.substr(i,j-i);
-            bool check = isValid(s);
-            if(check==true){
-                maxlen = max(maxlen,j-i);
+            if(checkSub(substring)==true){
+                maxLen = max(maxLen,j-i);
             }
         }
     }
-    return maxlen;
+    return maxLen;
 }
-// LONGEST LENGTH IN VALID PARENTHESIS OPTIMISED WAY 
+// lONGEST VALID PARENTHESIS 
 int longestValidParenthesis(string s){
-    stack<int>st;
-    st.push(-1);
     int maxlen=0;
+    stack<int>st;
     for(int i=0;i<s.size();i++){
         char character = s[i];
         if(character=='('){
             st.push(i);
-        }
-        else{
+        }else{
             st.pop();
             if(st.size()==0){
                 st.push(i);
             }else{
-                maxlen=max(maxlen,i-st.top());
+                maxlen = max(maxlen,i-st.top());
             }
         }
     }
