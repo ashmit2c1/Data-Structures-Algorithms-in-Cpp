@@ -561,3 +561,324 @@ vector<vector<int>>criticalConnections(int V,vector<int>adj[]){
     return ans;
 }
 // BRIDGES IN GRAPH OPTIMISED WAY
+
+
+// PATH WITH MIN EFFORT 
+bool isValid(int x,int y,vector<vector<int>>&matrix){
+    if(x>=0 && y>=0 && x<matrix.size() && y<matrix[0].size()){
+        return true;
+    }
+    return false;
+}
+int minimumEffortPath(vector<vector<int>>&matrix){
+    priority_queue<pair<int,pair<int,int>>,vector<pair<int,pair<int,int>>>,greater<pair<int,pair<int,int>>>>pq;
+    vector<vector<int>>efforts(matrix.size(),vector<int>(matrix[0].size(),INT_MAX));
+    efforts[0][0]=0;
+    pq.push({0,{0,0}});
+    int rows[4]={-1,1,0,0};
+    int cols[4]={0,0,-1,1};
+    while(pq.empty()==false){
+        int currentX = pq.top().second.first;
+        int currentY = pq.top().second.second;
+        int currentEffort = pq.top().first;
+        pq.pop();
+        if(currentX == matrix.size()-1 && currentY== matrix[0].size()-1){
+            return currentEffort;
+        }
+        pq.pop();
+        for(int i=0;i<4;i++){
+            int newX = currentX + rows[i];
+            int newY = currentY + cols[i];
+            if(isValid(newX,newY,matrix)==true){
+                int diff = abs(matrix[newX][newY]-matrix[currentX][currentY]);
+                int newEffort = max(currentEffort,diff);
+                if(efforts[newX][newY] > newEffort){
+                    efforts[newX][newY] = newEffort; 
+                    pq.push({newEffort,{newX,newY}});
+                }
+            }
+        }
+    }
+    return -1;
+}
+// PATH WITH MAXIMUM PROBABILITY 
+double pathWithMaxProb(int n,int start_node,int end_node,vector<double>prob,vector<vector<int>>&edges){
+    vector<vector<pair<double,int>>>adj(n);
+    for(int i=0;i<edges.size();i++){
+        int u=edges[i][0];
+        int v=edges[i][1];
+        double probs = prob[i];
+        adj[u].push_back({probs,v});
+        adj[v].push_back({probs,u});
+    }
+    vector<double>maxprob(n,0.0);
+    maxprob[start_node]=1.0;
+    priority_queue<pair<double,int>>pq;
+    pq.push({1.0,start_node});
+    while(pq.empty()==false){
+        double currentprob = pq.top().first;
+        double currentnode = pq.top().second;
+        pq.pop();
+        if(currentnode==end_node){
+            return currentprob;
+        }
+        int n=adj[currentnode].size();
+        for(int i=0;i<n;i++){
+            int neighbor=adj[currentnode][i].second;
+            double probss = adj[currentnode][i].first;
+            double newprob = probss*currentprob;
+            if(newprob > maxprob[neighbor]){
+                maxprob[neighbor]=newprob;
+                pq.push({newprob,neighbor});
+            }
+        }
+    }
+    return 0;
+}
+// COVID SPREAD
+bool isValid(int x,int y,int r,int c,vector<vector<int>>&matrix){
+    if(x>=0 && y>=0 && x < r && y < c && matrix[x][y]==1){
+        return true;
+    }
+    return false;
+}
+int covidspread(vector<vector<int>>&matrix){
+    int r=matrix.size();
+    int c=matrix[0].size();
+    queue<pair<int,int>>q;
+    int count=0;
+    for(int i = 0; i<r;i++){
+        for(int j=0;j<c;j++){
+            if(matrix[i][j]==2){
+                q.push({i,j});
+            }
+        }
+    }
+    int rows[4]={-1,1,0,0};
+    int cols[4]={0,0,-1,1};
+    while(q.empty()==false){
+        int n=q.size();
+        bool spread=false;
+        while(n--){
+            int x=q.front().first;
+            int y=q.front().second;
+            q.pop();
+            for(int i=0;i<4;i++){
+                int newX = x + rows[i];
+                int newY = y + cols[i];
+                if(isValid(newX,newY,r,c,matrix)==true){
+                    matrix[newX][newY]=2;
+                    q.push({newX,newY});
+                    spread=true;
+                }
+            }
+        }
+        if(spread==true){
+            count++;
+        }
+    }
+    for(int i=0;i<r;i++){
+        for(int j=0;j<c;j++){
+            if(matrix[i][j]==1){
+                return -1;
+            }
+        }
+    }
+    return count;
+}
+// FIND THE NUMBER OF ISLANDS IN A GRAPH 
+bool isValid(int x,int y,int r,int c,vector<vector<int>>&matrix){
+    if(x>=0 && y>=0 && x<r && y<c && matrix[x][y]==1){
+        return true;
+    }
+    return false;
+}
+int numIslands(vector<vector<int>>&matrix){
+    int r=matrix.size();
+    int c=matrix[0].size();
+    queue<pair<int,int>>q;
+    int count=0;
+    int rows[8]={-1,-1,-1,1,1,1,0,0};
+    int cols[8]={-1,0,1,-1,0,1,-1,1};
+    for(int i=0;i<r;i++){
+        for(int j=0;j<c;j++){
+            int value = matrix[i][j];
+            if(value==1){
+                q.push({i,j});
+                count++;
+                matrix[i][j]=0;
+                while(q.empty()==false){
+                    int x=q.front().first;
+                    int y=q.front().second;
+                    q.pop();
+                    for(int k=0;k<8;k++){
+                        int newX = x + rows[k];
+                        int newY = y + cols[k];
+                        if(isValid(newX,newY,r,c,matrix)==true){
+                            matrix[newX][newY]=0;
+                            q.push({newX,newY});
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return count; 
+}
+// COURSE SCHEDULER 
+bool isPossible(int N,int M,vector<pair<int,int>>&tasks){
+    vector<vector<int>>adj(N);
+    for(int i=0;i<M;i++){
+        int u=tasks[i].first;
+        int v=tasks[i].second;
+        adj[u].push_back(v);
+    }
+    vector<int>indegree(N,0);
+    for(int i=0;i<adj.size();i++){
+        for(int j=0;j<adj[i].size();i++){
+            int node=adj[i][j];
+            indegree[node]++;
+        }
+    }
+    queue<int>q;
+    for(int i=0;i<indegree.size();i++){
+        if(indegree[i]==0){
+            q.push(i);
+        }
+    }
+    vector<int>ans;
+    while(q.empty()==false){
+        int node=q.front();
+        ans.push_back(node);
+        int n=adj[node].size();
+        for(int i=0;i<n;i++){
+            int neighbor=adj[node][i];
+            indegree[neighbor]--;
+            if(indegree[neighbor]==0){
+                q.push(neighbor);
+            }
+        }
+    }
+    if(ans.size()!=N){
+        return false;
+    }else{
+        return true;
+    }
+}
+// PARALLEL COURSES 3 
+int minimumTime(int N,vector<int>&time,vector<vector<int>>relations){
+    vector<int>mintime(N,0);
+    vector<int>indegree(N,0);
+    vector<vector<int>>adj(N);
+    for(int i=0;i<relations.size();i++){
+        int u = relations[i][0]-1;
+        int v = relations[i][1]-1;
+        adj[u].push_back(v);
+    }
+    for(int i=0;adj.size();i++){
+        for(int j=0;j<adj[i].size();j++){
+            int node=adj[i][j];
+            indegree[node]++;
+        }
+    }
+    queue<int>q;
+    for(int i=0;i<indegree.size();i++){
+        if(indegree[i]==0){
+            q.push(i);
+            mintime[i]=time[i];
+        }
+    }
+    while(q.empty()==false){
+        int node=q.front();
+        q.pop();
+        int n=adj[node].size();
+        for(int i=0;i<n;i++){
+            int neighbor=adj[node][i];
+            mintime[neighbor]=max(mintime[neighbor],mintime[node]+time[neighbor]);
+            indegree[neighbor]--;
+            if(indegree[neighbor]==0){
+                q.push(neighbor);
+            }
+        }
+    }
+    return *max_element(mintime.begin(),mintime.end());
+}
+// SHORTEST DISTANCE FROM SOURCE TO DESTINATION 
+bool isValid(int x,int y,int N,int M,vector<vector<int>>&matrix){
+    if(x>=0 && y>=0 && x < N && y < M && matrix[x][y]==1){
+        return true;
+    }
+    return false;
+}
+int shortestDistance(int N,int M,vector<vector<int>>&matrix,int X,int Y){
+    int r=matrix.size();
+    int c=matrix[0].size();
+    if(matrix[0][0]==0 || matrix[X][Y]==0){
+        return -1;
+    }
+    queue<pair<pair<int,int>,int>>q;
+    vector<vector<bool>>visited(N,vector<bool>(M,false));
+    visited[0][0]=true;
+    q.push({{0,0},0});
+    int rows[4]={-1,1,0,0};
+    int cols[4]={0,0,-1,1};
+    while(q.empty()==false){
+        int x=q.front().first.first;
+        int y=q.front().first.second;
+        int step = q.front().second;
+        q.pop();
+        if(x==X && y==Y){
+            return step;
+        }
+        for(int i=0;i<4;i++){
+            int newX = x + rows[i];
+            int newY = y + cols[i];
+            if(isValid(newX,newY,N,M,matrix)==true){
+                visited[newX][newY]=true;
+                q.push({{newX,newY},step+1});
+            }
+        }
+    }
+    return -1;
+}
+// KNIGHT WALK 
+bool isValid(int x,int y,int n){
+    if(x>=0 && y>=0 && x < n  && y < n ){
+        return true;
+    }
+    return false;
+}
+int minsteptoreachtarget(vector<int>&knightPos,vector<int>&targetPos,int N){
+    if(knightPos[0]==targetPos[0] && knightPos[1]==targetPos[1]){
+        return 0;
+    }
+    queue<pair<int,int>>q;
+    vector<vector<bool>>visited(N,vector<bool>(N,false));
+    visited[knightPos[0]][knightPos[1]]=true;
+    q.push({knightPos[0],knightPos[1]});
+    int step=0;
+    int row[8]={2,2,-2,-2,1,-1,1,-1};
+    int col[8]={1,-1,1,-1,2,2,-2,-2};
+    while(q.empty()==false){
+        int cnt=q.size();
+        while(cnt--){
+            int x=q.front().first;
+            int y=q.front().second;
+            if(x==targetPos[0] && y==targetPos[1]){
+                return step;
+            }
+            q.pop();
+            for(int i=0;i<8;i++){
+                int newX = x+row[i];
+                int newY = y+col[i];
+                if(isValid(newX,newY,N)==true && visited[newX][newY]==false){
+                    visited[newX][newY]=true;
+                    q.push({newX,newY});
+                }
+            }
+        }
+        step++;
+    }
+    return -1;
+}
+
