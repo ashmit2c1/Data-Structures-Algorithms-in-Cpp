@@ -282,6 +282,46 @@ vector<int>findSpiralOrder(Node*root){
     }
     return ans;
 }
+// CHECK IF TWO NODES ARE COUSINS OR NOT 
+bool parentfunction(Node*root,int a,int b){
+    if(root==NULL){
+        return false;
+    }
+    if(root->left!=NULL && root->right!=NULL){
+        if(root->left->data==a && root->right->data==b){
+            return true;
+        }
+        if(root->left->data==b && root->right->data==a){
+            return true;
+        }
+    }
+    return parentfunction(root->left,a,b) || parentfunction(root->right,a,b);
+}
+bool isCousin(Node*root,int a,int b){
+    queue<Node*>q;
+    q.push(root);
+    int l1=-1;int l2=-1;
+    int level=0;
+    while(q.empty()==false){
+        int n=q.size();
+        while(n--){
+            Node*temp=q.front();
+            q.pop();
+            if(temp->data==a){l1=level;}
+            if(temp->data==b){l2=level;}
+            if(temp->left!=NULL){q.push(temp->left);}
+            if(temp->right!=NULL){q.push(temp->right);}
+        }
+        level++;
+        if(l1!=l2){return false;}
+        if(l1==-1 && l2==-1){break;}
+    }
+    if(parentfunction(root,a,b)==true){
+        return true;
+    }else{
+        return false;
+    }
+}
 // FIND THE LOWEST COMMEON ANCESTOR OF GIVEN TWO NODES
 Node* lowestCommonAncestor(Node* root,Node* p,Node* q){
     if(root==NULL || root==p || root==q){
