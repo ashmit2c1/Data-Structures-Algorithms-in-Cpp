@@ -214,6 +214,87 @@ int findLCA(int A,int B,int V,vector<vector<int>>&adj){
     return A;
 }
 // GIVEN TWO NDOES A AND B FIND THE DISTANCE BETWEEN THESE NODES 
+void dfsfunction(int node,int parent,vector<vector<int>>&adj,vector<int>&depth,vector<int>&parentarray){
+    parentarray[node]=parent;
+    depth[node]=depth[parent]+1;
+    for(int i=0;i<adj[node].size();i++){
+        int neighbor=adj[node][i];
+        if(neighbor!=parent){
+            dfsfunction(neighbor,node,adj,depth,parentarray);
+        }
+    }
+}
+int findLCA(int A,int B,vector<int>&depth,vector<int>&parentarray){
+    if(depth[A]<depth[B]){
+        swap(A,B);
+    }
+    while(depth[A]>depth[B]){
+        A=parentarray[A];
+    }
+    while(A!=B){
+        A=parentarray[A];
+        B=parentarray[B];
+    }
+    return A;
+}
 int findDistance(int A,int B,int V,vector<vector<int>>adj){
-    
+    vector<int>depth(V,0);
+    vector<int>parentarray(V,-1);
+    dfsfunction(0,-1,adj,depth,parentarray);
+    int lca=findLCA(A,B,depth,parentarray);
+    return depth[A]+depth[B]-2*depth[lca];
+}
+// FIND THE KTH ANCESTOR OF A TREE 
+void dfsfunction(int node,vector<int>&parent,vector<bool>&visited,vector<vector<int>>adj){
+    visited[node]=true;
+    int n=adj[node].size();
+    for(int i=0;i<n;i++){
+        int neighbor=adj[node][i];
+        if(visited[neighbor]==false){
+            parent[neighbor]=node;
+            dfsfunction(neighbor,parent,visited,adj);
+        }
+    }
+}
+int findancestor(int node,int K,vector<int>&parent){
+    int current=node;
+    while(K>0 && current!=-1){
+        current=parent[current];
+        K--;
+    }
+    return current;
+}
+int findkthAncestor(int V,int K,vector<vector<int>>adj,int vertex){
+    vector<bool>visited(V,false);
+    vector<int>parent(V,-1);
+    parent[0]=-1;
+    dfsfunction(0,parent,visited,adj);
+    int ans=findancestor(vertex,K,parent);
+    return ans;
+}
+// FIND THE MAX NODE IN ALL THE LEVELS OF A TREE 
+void dfsfunction(int node,int level,vector<int>&largest,vector<bool>&visited,vector<vector<int>>adj){
+    visited[node]=true;
+    int n=adj[node].size();
+    largest[level]=max(largest[level],node);
+    for(int i=0;i<n;i++){
+        int neighbor=adj[node][i];
+        if(visited[neighbor]==false){
+            dfsfunction(neighbor,level+1,largest,visited,adj);
+        }
+    }
+}
+vector<int>findlargest(int V,vector<vector<int>>adj){
+    vector<int>largest(V,INT_MIN);
+    vector<bool>visited(V,false);
+    dfsfunction(0,0,largest,visited,adj);
+    vector<int>result;
+    for(int i=0;i<largest.size();i++){
+        if(largest[i]==INT_MIN){
+            result.push_back(-1);
+        }else{
+            result.push_back(largest[i]);
+        }
+    }
+    return result;
 }
