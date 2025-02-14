@@ -389,3 +389,85 @@ int findSpread(vector<int>& arr, int k) {
     }
     return count;
 }
+// COPRIME SEGMENT 
+vector<vector<int>>findsubarrays(vector<int>&arr){
+    vector<vector<int>>ans;
+    for(int i=0;i<arr.size();i++){
+        for(int j=i;j<arr.size();j++){
+            vector<int>subarray;
+            for(int k=i;k<=j;k++){
+                subarray.push_back(arr[k]);
+            }
+            ans.push_back(subarray);
+        }
+    }
+    return ans;
+}
+int findGCD(int a,int b){
+    while(b!=0){
+        int rem = a%b;
+        a=b;
+        b=rem;
+    }
+    return a;
+}
+bool isGCD(vector<int>&arr){
+    int ans=arr[0];
+    for(int i=1;i<arr.size();i++){
+        ans=findGCD(ans,arr[i]);
+    }
+    if(ans==1){
+        return true;
+    }else{
+        return false;
+    }
+}
+int findlen(vector<vector<int>>&subarrays){
+    vector<int>ans;
+    for(int i=0;i<subarrays.size();i++){
+        vector<int>check=subarrays[i];
+        if(isGCD(check)==true){
+            ans.push_back(check.size());
+        }
+    }
+    sort(ans.begin(),ans.end());
+    return ans[0];
+}
+int shortestCoprime(vector<int>&arr){
+    vector<vector<int>>subarrays=findsubarrays(arr);
+    int ans=findlen(subarrays);
+    return ans;
+}
+int findGCD(int a, int b) {
+    while (b != 0) {
+        int rem = a % b;
+        a = b;
+        b = rem;
+    }
+    return a;
+}
+// SHORTEST CO PRIME SEGMENT TWO POINTER TECHNIQUE 
+int shortestCoprime(vector<int>& arr) {
+    int n = arr.size();
+    int overallGCD = arr[0];
+    for (int i = 1; i < n; i++) {
+        overallGCD = findGCD(overallGCD, arr[i]);
+        if (overallGCD == 1) break;
+    }
+    if (overallGCD != 1) return -1; 
+
+    int left = 0, minLen = n;
+    int currentGCD = 0;
+    for (int right = 0; right < n; right++) {
+        currentGCD = findGCD(currentGCD, arr[right]); 
+        while (currentGCD == 1) { 
+            minLen = min(minLen, right - left + 1);
+            left++; 
+            currentGCD = arr[left];
+            for (int i = left + 1; i <= right; i++) {
+                currentGCD = findGCD(currentGCD, arr[i]); 
+            }
+        }
+    }
+    return minLen;
+}
